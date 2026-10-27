@@ -2,10 +2,11 @@
 const NodeGeocoder = require('node-geocoder');
 const geolib = require('geolib');
 
+// setting options for geocoder
 const options = {
     provider: 'openstreetmap',
-    language: 'en',
-    region: 'in',
+    language: 'en', // specify language
+    region: 'in', // specify region / country
 }
 
 const geoCoder = NodeGeocoder(options);
@@ -13,6 +14,7 @@ const geoCoder = NodeGeocoder(options);
 
 async function getCordinates(sourcePincode, destinationPincode) {
     try {
+        // fetch both zipcode information
         let [sourceLocation, destinationLocation] = await Promise.all([
             geoCoder.geocode(sourcePincode),
             geoCoder.geocode(destinationPincode),
@@ -20,7 +22,7 @@ async function getCordinates(sourcePincode, destinationPincode) {
         console.log('source', sourceLocation, 'destination', destinationLocation)
 
         destinationLocation = destinationLocation.filter(location => {
-            return location.countryCode === 'IN';
+            return location.countryCode === 'IN'; // filter out non indian locations
         });
         sourceLocation = sourceLocation.filter(location => {
             return location.countryCode === 'IN';

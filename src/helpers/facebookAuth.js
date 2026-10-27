@@ -20,7 +20,7 @@
 
 // app.get('/facebook/callback', passport.authenticate('facebook', {
 //     successRedirect: '/profile',
-//     failureRedirect: '/failer',
+//     failureRedirect: '/failure',
 // }));
 
 // app.get('/profile', (req, res) => {

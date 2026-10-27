@@ -15,6 +15,7 @@ const { Product, Inventory } = require('../models/product.models')
 const Wallet = require('../models/wallet.model');
 const excelJs = require('exceljs');
 const Notification = require('../models/notification.model');
+const { config } = require('../config/app.config');
 
 const loadDashboard = asyncHandler(async (req, res, next) => {
     let now = new Date();
@@ -170,7 +171,7 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
     monthlyRevenue = monthlyDeliveredOrders.find(item => item._id == now.getMonth() + 1)?.totalAmount // retrieve the current monthly revenue
 
     res.status(200)
-        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingTenProducts, brand: topTenBrand, topTenCetagory: topTenCatagory });
+        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingTenProducts, brand: topTenBrand, topTenCetagory: topTenCategory });
 })
 
 const getFilterData = asyncHandler(async (req, res, next) => {
@@ -289,7 +290,7 @@ const salesReportDownLoadExcel = asyncHandler(async (req, res, next) => {
         //     }
         // }
     ])
-  
+
     const workBook = new excelJs.Workbook();
     const workSheet = workBook.addWorksheet('Report');
     const destinationPath = path.join(__dirname, '../../public/excelSheets');
@@ -324,8 +325,8 @@ const loadLogin = asyncHandler(async (req, res, next) => {
 })
 
 const checkAuthentic = asyncHandler(async (req, res, next) => {
-    email = process.env.ADMIN_EMAIL;
-    password = process.env.ADMIN_PASSWORD;
+    const email = config.admin.email;
+    const password = config.admin.password;
     if (email == req.body.email) {
 
         if (password == req.body.password) {
@@ -365,10 +366,10 @@ const loadOrders = asyncHandler(async (req, res, next) => {
         .skip(page * limit)
         .limit(limit)
     res.render('admin/order-details', {
-            order,
-            page,
-            total
-        });
+        order,
+        page,
+        total
+    });
 })
 
 const loadSingleOrderDetails = asyncHandler(async (req, res, next) => {
@@ -490,14 +491,14 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
     })
     await order.save();
     let image;
-    if(status == 'Shipped'){
+    if (status == 'Shipped') {
         image = '1287161_164732-OVURV2-709.jpg';
 
 
-    }else if(status == 'Delivered') {
+    } else if (status == 'Delivered') {
         image = '7967777_3802305.jpg'
 
-    }else if(status == 'Out For Delivery') {
+    } else if (status == 'Out For Delivery') {
         image = '29765706_7591470.jpg'
 
     }
@@ -509,7 +510,7 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
             title: 'Order ' + status,
             message: 'Dear user, Your order is ' + status + '! Check your order Check here',
             url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
-            image: '/notificationImages/'+image,
+            image: '/notificationImages/' + image,
         })
     }
     return res.json({
@@ -741,7 +742,7 @@ const getOfferData = asyncHandler(async (req, res, next) => {
                     error: false,
                     categoryData,
                     message: 'Products fetched successfully'
-            })
+                })
         }
     }
 })
@@ -878,7 +879,7 @@ const returnChangeStatus = asyncHandler(async (req, res, next) => {
                     'sizeVariant.$.stock': returns.quantity,
                 }
             });
-          
+
         const notification = await Notification.create({
             recipient: returns.user,
             type: 'success',
@@ -889,10 +890,10 @@ const returnChangeStatus = asyncHandler(async (req, res, next) => {
         })
         flag = false;
     }
- 
+
     if (flag) {
         const notification = await Notification.create({
-            recipient:  returns.user,
+            recipient: returns.user,
             type: 'error',
             title: 'Return request got Rejected!',
             message: 'Dear user, Your Return request has been rejected by the admin! Check your order, Check here',

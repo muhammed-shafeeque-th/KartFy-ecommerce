@@ -10,7 +10,7 @@ cloudinary.config({
     api_secret: process.env,
 })
 
-async function uplaodToCloudinary(localFilePath) {
+async function uploadToCloudinary(localFilePath) {
     try {
 
         let mainFolderName = 'main'
@@ -39,4 +39,4 @@ async function uplaodToCloudinary(localFilePath) {
     }
 }
 
-module.exports = uplaodToCloudinary;
+module.exports = uploadToCloudinary;

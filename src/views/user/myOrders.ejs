@@ -112,7 +112,7 @@
 														<% order.orderedItems.forEach((item, i)=> {%>
 															<div style="float:left; flex-wrap: wrap;" class="m-2">
 																<a
-																	href="api/v1/product-detail?id=<%=item.product._id%>">
+																	href="/api/v1/product-detail?id=<%=item.product._id%>">
 																	<img src="/Data/uploads/<%=item.product.images[0]%>"
 																		alt="" class="img-md rounded mx-2 shadow" />
 																	<p class="text-start text-dark"

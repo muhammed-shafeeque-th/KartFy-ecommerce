@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { config } = require('../config/app.config');
 
-const { JWT_ACCESS_TOKEN_SECRET, JWT_ACCESS_TOKEN_EXPIRY,
-    JWT_REFRESH_TOKEN_SECRET, JWT_REFRESH_TOKEN_EXPIRY, BCRYPT_SALT } = process.env;
+const { accessTokenExpiry, accessTokenSecret, bcryptSalt, refreshTokenExpiry, refreshTokenSecret, } = config.jwt;
 
 
 
@@ -53,9 +53,9 @@ userSchema.methods.generateAccessToken = () => {
         email: this.email,
         name: this.name
     },
-        JWT_ACCESS_TOKEN_SECRET,
+        accessTokenSecret,
         {
-            expiresIn: JWT_ACCESS_TOKEN_EXPIRY
+            expiresIn: accessTokenExpiry
         }
     )
 
@@ -67,10 +67,10 @@ userSchema.methods.generateRefreshToken = () => {
     return jwt.sign({
         _id: this._id,
     },
-    JWT_REFRESH_TOKEN_SECRET,
-    {
-        expiresIn: JWT_REFRESH_TOKEN_EXPIRY
-    }
+        refreshTokenSecret,
+        {
+            expiresIn: refreshTokenExpiry
+        }
     )
 
 }

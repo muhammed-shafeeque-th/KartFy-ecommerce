@@ -9,7 +9,7 @@ const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
 const User = require('../models/user.model');
 const Wallet = require('../models/wallet.model');
-const Referrel = require('../models/referrel.model')
+const Referral = require('../models/referrel.model')
 const Notification = require('../models/notification.model')
 const { otpTemplate, passwordUpdated } = require('../utilities/emailTemplates');
 
@@ -62,14 +62,7 @@ const createUser = asyncHandler(async (req, res, next) => {
     }
     let { error, value } = userHelper.userValidation.validate(req.body);
     if (error) {
-        console.log(error)
-        return res
-            .status(401)
-            .json({
-                success: false,
-                error: true,
-                message: error.message
-            })
+        throw new ApiError(400,error.message );
     }
     const hash = await bcrypt.hash(req.body.password, 10);
     value.password = hash;
@@ -103,12 +96,7 @@ const varifyOtp = asyncHandler(async (req, res, next) => {
     let { otp } = req.body;
     let user = await OTP.findOne({ email: req.session?.value?.email, otp });
     if (!user) {
-        return res.status(400)
-            .json({
-                error: true,
-                success: false,
-                message: 'Incorrect OTP! please check again.'
-            })
+        throw new ApiError(400, 'Incorrect OTP! please check again.' )
     }
     let referrelCode = generateOtp.generate(5, {
         digits: true,
@@ -118,7 +106,7 @@ const varifyOtp = asyncHandler(async (req, res, next) => {
     });
     user = await User.create(req.session.value);
     await Wallet.create({ user: user._id })
-    await Referrel.create({ user: user._id, code: referrelCode })
+    await Referral.create({ user: user._id, code: referrelCode })
     await Notification.create({
         recipient: user._id,
         type: 'message',
@@ -141,7 +129,6 @@ const varifyOtp = asyncHandler(async (req, res, next) => {
 
 const forgotPassword = asyncHandler(async (req, res, next) => {
     let token = generateOtp.generate(8)
-    console.log('token', token);
     let email = req.body.email;
     let user = await User.findOne({ email })
     if (user) {
@@ -172,7 +159,6 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
 const resetPassword = asyncHandler(async (req, res, next) => {
     let userTocken = req.session.token;
-    console.log('token', userTocken)
     if (!userTocken) {
         req.flash('resetError', 'Something went wrong')
         return res.status(302)
@@ -211,12 +197,8 @@ const resendOtp = asyncHandler(async (req, res, next) => {
     let email = req.session.value?.email;
     console.log(email);
     if (!email) {
-        return res.status(400)
-            .json({
-                success: false,
-                error: true,
-                message: 'Something went wrong'
-            })
+        throw new ApiError(400, "Email is required field");
+        
     }
     let otp = generateOtp.generate(4, {
         digits: true,
@@ -239,11 +221,8 @@ const userLogin = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
     let user = await User.findOne({ email });
     if (!user) {
-        return res.json({
-            success: false,
-            error: true,
-            message: 'Invalid email!, try again.'
-        })
+        throw new ApiError(400, 'Invalid email!, try again.')
+       
     }
     if (user.isBlocked) {
         return res.json({
