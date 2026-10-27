@@ -3,9 +3,11 @@ const Coupon = require('../models/coupon.model');
 const User = require('../models/user.model');
 const Address = require('../models/address.model');
 const { Product, Inventory } = require('../models/product.models');
-const { Cart, Wishlist } = require('../models/wishlist.model');
+const { Cart } = require('../models/cart.model');
+const { Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
-const { createRazorpayOrder, createPayPalPayment } = require('../controller/payment.controller');
+const { createRazorpayPayment } = require("../helpers/razorpayPayment")
+const { createPayPalPayment } = require('../helpers/paypalPayment');
 const mongoose = require('mongoose');
 const Wallet = require('../models/wallet.model');
 const puppeteer = require('puppeteer');
@@ -26,6 +28,8 @@ const loadOrderSuccess = asyncHandler(async (req, res, next) => {
     res.render('user/orderSuccess', { currentOrder, orderId })
 
 })
+
+
 
 const proceedtToCheckout = asyncHandler(async (req, res, next) => {
     let user = req.session.user;
@@ -79,7 +83,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
     let cart = await Cart.aggregate([
         {
             $match: {
-                user: new mongoose.Types.ObjectId( user._id)
+                user: new mongoose.Types.ObjectId(user._id)
             }
         },
         {
@@ -90,7 +94,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
                 from: 'products',
                 localField: 'products.product',
                 foreignField: '_id',
-                as: 'productss',     
+                as: 'productss',
             }
         },
         {
@@ -165,7 +169,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
         },
         {
             $addFields: {
-               
+
                 categoryOfferPrice: {
                     $cond: [
                         '$shouldUnwindCategory',
@@ -199,14 +203,14 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
                         },
                         null
                     ]
-                },          
+                },
             }
         },
         {
             $addFields: {
                 minimumPrice: {
                     $round: [
-                    
+
                         {
                             $min: ['$productOfferPrice', '$categoryOfferPrice', '$productss.price']
                         }
@@ -217,7 +221,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
         {
             $addFields: {
                 savedPrice: {
-                    $subtract: [ '$productss.mrpPrice', '$minimumPrice']
+                    $subtract: ['$productss.mrpPrice', '$minimumPrice']
                 }
             }
         },
@@ -231,43 +235,44 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
             }
         }
     ])
-        console.log(cart);
+    console.log(cart);
     let cartCoupon = cart[0].coupon;
-    if(cartCoupon) {
+    if (cartCoupon) {
         await Coupon.findOneAndUpdate({
             _id: cartCoupon.couponId
         },
-        {
-            $push: {
-                appliedUsers: user._id
+            {
+                $push: {
+                    appliedUsers: user._id
+                }
             }
-        }
-    )}
+        )
+    }
     let orderedItems = cart.map(item => {
         return {
             product: item.products.product,
             quantity: item.products.quantity,
             size: item.products.size,
-            totalPrice:  item.minimumPrice
+            totalPrice: item.minimumPrice
         }
     })
-    let orderAmount = orderedItems.reduce((acc, item) => acc + item.totalPrice * item.quantity, 0 );
+    let orderAmount = orderedItems.reduce((acc, item) => acc + item.totalPrice * item.quantity, 0);
     let totalSaved = cart.reduce((acc, item) => acc + item.savedPrice * item.products.quantity, 0);
-    totalSaved += (cart[0].coupon?.discount ? cart[0].coupon?.discount: 0); // total price after deducting the coupn discount if there is any discount
+    totalSaved += (cart[0].coupon?.discount ? cart[0].coupon?.discount : 0); // total price after deducting the coupn discount if there is any discount
     orderAmount -= (cart[0].coupon?.discount ? cart[0].coupon?.discount : 0);
     orderAmount += (cart[0].deliveryCharge ? cart[0].deliveryCharge : 0);
-    let coupon;   
-    if( !orderAmount > 5000){
-    let sourcePincode = '676525';
-    // if(cart.deliveryCharge > 0) {
-    //    let [sourceCordinate , destinationCordinate] = getCordinates(sourcePincode, userAddress.pincode);
-    //    if(!destinationCordinate) {
-    //     cart.deliveryCharge = 40
-    //    }
-    //    let distance = getDistance(sourceCordinate, destinationCordinate);
-    //    let deliveryCharge = calculateDeliveryCharge(distance)
-    //    cart.deliveryCharge = deliveryCharge;
-    // }
+    let coupon;
+    if (!orderAmount > 5000) {
+        let sourcePincode = '676525';
+        // if(cart.deliveryCharge > 0) {
+        //    let [sourceCordinate , destinationCordinate] = getCordinates(sourcePincode, userAddress.pincode);
+        //    if(!destinationCordinate) {
+        //     cart.deliveryCharge = 40
+        //    }
+        //    let distance = getDistance(sourceCordinate, destinationCordinate);
+        //    let deliveryCharge = calculateDeliveryCharge(distance)
+        //    cart.deliveryCharge = deliveryCharge;
+        // }
     }
 
     orderedItems.forEach(async (item) => {
@@ -276,15 +281,15 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
             'sizeVariant.size': item.size
         }, {
             $inc: {
-                'sizeVariant.$.stock': -parseInt(item.quantity),     
+                'sizeVariant.$.stock': -parseInt(item.quantity),
             }
         },
             { new: true }
         );
     })
-  
-    if(cart[0].coupon) {
-         coupon = {
+
+    if (cart[0].coupon) {
+        coupon = {
             couponId: cart[0].coupon.couponId,
             discount: cart[0].coupon.discount,
         }
@@ -312,9 +317,9 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
             type: 'info',
             title: 'Order placed successfully',
             message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
             image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
-        }) 
+        })
         return res.status(201)
             .json({
                 success: true,
@@ -363,9 +368,9 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
                 type: 'info',
                 title: 'Order placed successfully',
                 message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-                url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+                url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
                 image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
-            }) 
+            })
 
             res.status(200)
                 .json({
@@ -392,13 +397,14 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
         await Cart.deleteOne({
             user: user._id
         })
+
         if (paymentMethod == 'RazorPay') {
-            createRazorpayOrder(req, res, order);
+            createRazorpayPayment(res,  order);
 
         } else if (paymentMethod == 'PayPal') {
             createPayPalPayment(req, res, next, order);
             req.session.orderId = order._id;
-        } 
+        }
     }
 })
 
@@ -415,7 +421,7 @@ const orderCancel = asyncHandler(async (req, res, next) => {
     let orderedItems = order.orderedItems;
     orderedItems.forEach(async item => {
         await Inventory.updateOne({
-            product:  item.product,
+            product: item.product,
             "sizeVariant.size": item.size
         },
             {
@@ -431,7 +437,7 @@ const orderCancel = asyncHandler(async (req, res, next) => {
         },
             {
                 $inc: {
-                    balance: refundAmount 
+                    balance: refundAmount
                 },
                 $push: {
                     transactions: {
@@ -452,12 +458,12 @@ const orderCancel = asyncHandler(async (req, res, next) => {
     order.orderStatus = 'Cancelled';
     order = await order.save();
     const notification = await Notification.create({
-    type: 'alert',
-    recipient: user._id,
-    title: 'Oops..! Order got Cancelled',
-    message: 'Dear user, Your order got Cancelled! Check your order Check here',
-    url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
-    image: '/notificationImages/8918481_4029028.jpg',
+        type: 'alert',
+        recipient: user._id,
+        title: 'Oops..! Order got Cancelled',
+        message: 'Dear user, Your order got Cancelled! Check your order Check here',
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        image: '/notificationImages/8918481_4029028.jpg',
     })
     return res.json({
         success: true,
@@ -487,7 +493,7 @@ const orderProductReview = asyncHandler(async (req, res, next) => {
         }
     )
     let product = await Product.findOne({ _id: productId });
-    let ratingCount = await Review.countDocuments({product:productId})
+    let ratingCount = await Review.countDocuments({ product: productId })
     let currentRatingAvg = +product.avgRating;
     let newRatingAvg;
     if (ratingCount != 0) {
@@ -514,7 +520,7 @@ const orderProductReview = asyncHandler(async (req, res, next) => {
 const orderReturn = asyncHandler(async (req, res, next) => {
     console.log(req.body)
     let user = req.session.user
-    let { reason, comments, orderId, quantity, price, size, productId,orderedItemId } = req.body;
+    let { reason, comments, orderId, quantity, price, size, productId, orderedItemId } = req.body;
     let userReturn = await Return.create({
         user: user._id,
         order: orderId,
@@ -546,9 +552,9 @@ const orderReturn = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Product Return requested send successfully!',
         message: 'Dear user, Your product return request has send successfully! Get more details about the return.. !',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
-        image: '/Data/uploads/'+product.images[0],
-        });
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        image: '/Data/uploads/' + product.images[0],
+    });
 
     return res.status(201)
         .json({
@@ -563,7 +569,7 @@ const loadMyOrders = asyncHandler(async (req, res, next) => {
     let page = parseInt(req.query.page) - 1 || 0;
     let limit = parseInt(req.query.limit) || 7;
     page < 0 ? (page = 0) : page = page
-    let total = await Order.countDocuments({user: user._id});
+    let total = await Order.countDocuments({ user: user._id });
     // (page > Math.trunc(total / limit) - 1) ? (page = Math.trunc(total / limit) - 1) : page = page
     let order = await Order.find({
         user: user._id
@@ -574,11 +580,11 @@ const loadMyOrders = asyncHandler(async (req, res, next) => {
         .skip(page * limit)
         .limit(limit)
     res.render('user/myOrders',
-            {
-                order,
-                total,
-                page
-            })
+        {
+            order,
+            total,
+            page
+        })
 })
 
 const loadSingleOrderDetails = asyncHandler(async (req, res, next) => {
@@ -608,12 +614,12 @@ const downloadOrderInvoice = asyncHandler(async (req, res, next) => {
         user: userDetails,
     }
     let filePath = path.resolve(__dirname, '../views/user/invoice.ejs');
-    let html =  fs.readFileSync(filePath).toString();
+    let html = fs.readFileSync(filePath).toString();
     const ejsData = ejs.render(html, data);
-    let browser = await puppeteer.launch({headless: 'new'});
+    let browser = await puppeteer.launch({ headless: 'new' });
     let page = await browser.newPage();
-    await page.setContent(ejsData, {waitUntil: 'networkidle0'});
-    let pdfBytes = await page.pdf( {format: 'letter'});
+    await page.setContent(ejsData, { waitUntil: 'networkidle0' });
+    let pdfBytes = await page.pdf({ format: 'letter' });
     await browser.close();
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
@@ -647,9 +653,9 @@ const razorpaySuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
-    }) 
+    })
     return res.status(200)
         .json({
             success: true,
@@ -680,9 +686,9 @@ const razorpayFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
-    }) 
+    })
 
     return res.status(400)
         .json({
@@ -718,9 +724,9 @@ const paypalSuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
-    }) 
+    })
     return res.redirect('/api/v1/order-success?orderId=' + orderId)
     // return res.status(200)
     //     .json({
@@ -753,9 +759,9 @@ const paypalFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
-    }) 
+    })
 
     return res.redirect(`api/v1/admin//my-orders/single-orderDetails?id=${orderId}`)
     // return res.status(400)
@@ -771,7 +777,7 @@ const paypalFailure = asyncHandler(async (req, res, next) => {
 const retryOrderPay = asyncHandler(async (req, res, next) => {
     let orderId = req.body.orderId;
     let order = await Order.findOne({ _id: orderId });
-    createRazorpayOrder(req, res, order);
+    createRazorpayPayment(req, res, order);
 })
 
 const retryPaymentSuccess = asyncHandler(async (req, res, next) => {
@@ -796,9 +802,9 @@ const retryPaymentSuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
-    }) 
+    })
     return res.status(200)
         .json({
             success: true,
@@ -830,9 +836,9 @@ const retryPaymentFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id='+order._id,
+        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
-    }) 
+    })
 
     return res.status(200)
         .json({

@@ -7,7 +7,8 @@ const User = require('../models/user.model');
 const Address = require('../models/address.model');
 const Category = require('../models/category.model');
 const { Product, Inventory } = require('../models/product.models');
-const { Cart, Wishlist } = require('../models/wishlist.model');
+const { Cart } = require('../models/cart.model');
+const {  Wishlist } = require('../models/wishlist.model');
 const Wallet = require('../models/wallet.model');
 const Banner = require('../models/banner.model');
 const Referrel = require('../models/referrel.model');
@@ -28,20 +29,20 @@ const loadShop = asyncHandler(async (req, res, next) => {
     let size = req.query.size || [];
     let gender = (Array.isArray(req.query.Gender) ? req.query.Gender : req.query.Gender?.split(' '));
     let brand = (Array.isArray(req.query.Brands) ? req.query.Brands : req.query.Brands?.split(' '));
-    let categor = [];
-    if (gender) categor.push({ 'products.category.Gender': { $in: gender } });
-    if (category) categor.push({ 'products.category.Category': { $in: category } })
-    if (brand) categor.push({ 'products.category.Brands': { $in: brand } })
+    let stageCategory = [];
+    if (gender) stageCategory.push({ 'products.category.Gender': { $in: gender } });
+    if (category) stageCategory.push({ 'products.category.Category': { $in: category } })
+    if (brand) stageCategory.push({ 'products.category.Brands': { $in: brand } })
 
     
     // use query params to filter out the required products
     let matchValue = {};
     let sort = req.query.sort?.trim() || ''
     let search = req.query.search ? String(req.query.search).trim() : ''
-    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '') // sanitize special characters from search input 
+    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '') // sanitize search query params (specifically checking special regex ) 
     if (gender || category || brand) {
         matchValue = {
-            $or: categor
+            $or: stageCategory
         }
     }
     if (sort == 'high to Low') {
