@@ -112,9 +112,9 @@
                                 </a>
                                 <div class="header-menu">
                                     <ul>
-                                        <li><a href="/api/v1/profile"><i class="fa-solid fa-user mx-3"></i>Profile</a>
+                                        <li><a href="/profile"><i class="fa-solid fa-user mx-3"></i>Profile</a>
                                         </li>
-                                        <li><a href=""><button style="all:unset" onclick="logout()"><i
+                                        <li><a href="/"><button style="all:unset" onclick="logout()"><i
                                                         class="fa-solid fa-user-plus mx-3"></i></i>Logout</a></button>
                                         </li>
                                     </ul>
@@ -125,9 +125,9 @@
                                     <a href="#"><i class="fa-solid fa-user m-3"></i>Login</a>
                                     <div class="header-menu">
                                         <ul>
-                                            <li><a href="/api/v1/signin"> <i
+                                            <li><a href="/signin"> <i
                                                         class="fa-solid fa-right-to-bracket mx-3"></i> Login</a></li>
-                                            <li><a href="/api/v1/signup"><i
+                                            <li><a href="/signup"><i
                                                         class="fa-solid fa-user-plus mx-3"></i>signup</a></li>
                                         </ul>
                                     </div><!-- End .header-menu -->
@@ -147,14 +147,14 @@
                 <div class="container">
                     <!--  -->
                     <div class="header-center">
-                        <a href="/api/v1/" class="logo">
+                        <a href="/" class="logo">
                             <img src="/assets/images/demos/demo-6/logo.png" alt="Molla Logo" width="82" height="20">
                         </a>
                     </div><!-- End .header-left -->
                    
                     <%if(user){%>
                         <div class="header-right" id="header-right">
-                            <a href="/api/v1/wishlist" class="wishlist-link">
+                            <a href="/wishlist" class="wishlist-link">
                                 <span class="wishlist-txt m-3">My Wishlist</span>
                                 <i class="icon-heart-o"></i>
                                 <span class="wishlist-count">
@@ -164,7 +164,7 @@
                             </a>
 
                             <div class="dropdown cart-dropdown">
-                                <a href="/api/v1/cart" class="dropdown-toggle">
+                                <a href="/cart" class="dropdown-toggle">
                                     <i class="icon-shopping-cart"></i>
                                     <span class="cart-count">
                                         <%=user.cartCount ? user.cartCount : 0%>
@@ -185,7 +185,7 @@
                                 </div><!-- End .dropdown-menu -->
                             </div><!-- End .cart-dropdown -->
                         </div>
-                        <a href="/api/v1/user-notifications">
+                        <a href="/user-notifications">
                             <button id="notificationButton"  >
                                 <i class="fas fa-bell"></i>
                                 <span class="notification-count" id="notificationCount"><%= user.notificationCount > 9 ? '9+' : user.notificationCount%></span>
@@ -291,7 +291,7 @@
             </div> -->
             <script>
                 function logout() {
-                    fetch('/api/v1/logout', {
+                    fetch('/logout', {
                         method: "GET",
 
                     }).then((res) => {

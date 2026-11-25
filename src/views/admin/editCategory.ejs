@@ -304,7 +304,7 @@
         
           $.ajax({
             type: "POST",
-            url: "/api/v1/admin/category/edit-category",
+            url: "/admin/category/edit-category",
             data: JSON.stringify(data),
             contentType: "application/JSON",
             success: (res) => {
@@ -316,7 +316,7 @@
                   timer: 1500,
                 });
                 setTimeout(() => {
-                  window.location = '/api/v1/admin/category'
+                  window.location = '/admin/category'
 
                 }, 2000)
 

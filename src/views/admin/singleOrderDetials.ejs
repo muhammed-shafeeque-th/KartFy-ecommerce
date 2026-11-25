@@ -109,7 +109,7 @@
                       <td><%=order.orderId%></td>
                       <td>
                         <b>
-                          <a href="/api/v1/admin/products/product-detail?id=<%=item.product._id%>">
+                          <a href="/admin/products/product-detail?id=<%=item.product._id%>">
 
                           <img
                             src="/Data/uploads/<%=item.product.images[0]%>"
@@ -323,14 +323,14 @@
             };
             $.ajax({
               type: "PUT",
-              url: "/api/v1/admin/orders/single-order-details/change-orderStatus",
+              url: "/admin/orders/single-order-details/change-orderStatus",
               data: JSON.stringify(data),
               contentType: "application/json",
               success: (response) => {
                 if (response.success) {
                   console.log("success");
                   $("#ReloadTable").load(
-                    `/api/v1/admin/orders/single-order-details?id=${orderId} #ReloadTable`,
+                    `/admin/orders/single-order-details?id=${orderId} #ReloadTable`,
                     () => {
                       // Reattach event listeners after content is loaded
                       attachEventListeners();

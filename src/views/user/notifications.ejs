@@ -134,7 +134,7 @@
 
                     </div>
                     <div class="header-center">
-                        <a href="/api/v1/" class="logo">
+                        <a href="/" class="logo">
                             <img src="/assets/images/demos/demo-6/logo.png" alt="Molla Logo" width="82" height="20">
                         </a>
                     </div><!-- End .header-left -->
@@ -413,7 +413,7 @@
 <script>
     function viewMore(notificationId, url) {
 
-        fetch('/api/v1/user-notifications/mark-as-seen', {
+        fetch('/user-notifications/mark-as-seen', {
             method: 'PATCH',
             body: JSON.stringify({ notificationId }),
             headers: {

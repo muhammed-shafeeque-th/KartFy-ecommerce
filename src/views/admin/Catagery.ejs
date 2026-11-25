@@ -65,7 +65,7 @@
                   <header class="border-bottom mb-4 pb-4">
                     <div class="row">
                       <div class="col-lg-2 col-6">
-                        <a class="btn btn-sm btn-dark" href="/api/v1/admin/category/add-category">
+                        <a class="btn btn-sm btn-dark" href="/admin/category/add-category">
                           Add category
                         </a>
                       </div>
@@ -140,7 +140,7 @@
                                     <%= category.isListed ? "Unlist " : "List" %>
 
                                   </button>
-                                  <a id="edit" href="/api/v1/admin/category/edit-category?id=<%=category._id%>"
+                                  <a id="edit" href="/admin/category/edit-category?id=<%=category._id%>"
                                     class="btn btn-outline-dark font-sm">
                                     Edit
                                   </a>
@@ -208,7 +208,7 @@
                try {
                  let targetId = event.currentTarget.dataset.target
                  console.log(targetId)
-                window.location.href = `/api/v1/admin/categories/sub-categories?id=${targetId}`
+                window.location.href = `/admin/categories/sub-categories?id=${targetId}`
                } catch (error) {
                 console.log(error)
                 

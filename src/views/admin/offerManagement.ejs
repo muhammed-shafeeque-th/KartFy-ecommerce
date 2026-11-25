@@ -52,7 +52,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form action="/api/v1/admin/offers/create-offer" method="post">
+              <form action="/admin/offers/create-offer" method="post">
                 <label for="form-label">Name</label>
                 <input style="visibility: hidden;" type="text" name="id" id="couponId">
                 <input
@@ -212,7 +212,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form action="/api/v1/admin/offers/edit-offer" method="post">                  <label for="form-label">Name</label>
+              <form action="/admin/offers/edit-offer" method="post">                  <label for="form-label">Name</label>
                   <input style="visibility: hidden;" type="text" name="id" id="couponId1">
                   <input
                     type="text"
@@ -344,7 +344,7 @@
                       <a href="#" class="itemside">
                         <%if(c.productIds.length != 0){%>
                           <%c.productIds.forEach(product => {%>
-                            <!-- <a href="api/v1/admin/products/product-detail?id=<%=product._id%>"></a> -->
+                            <!-- <a href="/admin/products/product-detail?id=<%=product._id%>"></a> -->
                             <div class="float-left p-2">                
                               <img src="/Data/uploads/<%=product.images[0]%>"
                             class="img-sm m-2"
@@ -443,7 +443,7 @@
           const offerType = this.value
           console.log(offerType);
           if(offerType) {
-            axios.put('/api/v1/admin/offers/get-offer-data', {offerType} )
+            axios.put('/admin/offers/get-offer-data', {offerType} )
             .then(response => {
               console.log(response.data.productData)
               if(response.data.productData) {
@@ -601,12 +601,12 @@
       if (decision.isConfirmed) {
         $.ajax({
           method: "put",
-          url: "/api/v1/admin/offers/list-unlist-offer",
+          url: "/admin/offers/list-unlist-offer",
           data: JSON.stringify(data),
           contentType: "application/json",
           success: (response) => {
             if (response.success === true) {
-              $("#Reload").load("/api/v1/admin/offers #Reload", null, () => {
+              $("#Reload").load("/admin/offers #Reload", null, () => {
                 Swal.fire({
                   title: `success`,
                   icon: "success",

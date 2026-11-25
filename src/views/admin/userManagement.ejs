@@ -163,12 +163,12 @@ function block(id, user, isBlocked) {
            if (decision.isConfirmed) {
                $.ajax({
                    method: 'POST',
-                   url: '/api/v1/admin/users/block-user',
+                   url: '/admin/users/block-user',
                    data: JSON.stringify(data),
                    contentType: 'application/json',
                    success: (response) => {
                        if (response.block === true) {
-                           $('#Reload').load('/api/v1/admin/users #Reload', null, () => {
+                           $('#Reload').load('/admin/users #Reload', null, () => {
                                Swal.fire({
                                    title: 'blocked',
                                    width:'300px',
