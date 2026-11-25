@@ -311,7 +311,7 @@ const salesReportDownLoadExcel = asyncHandler(async (req, res, next) => {
 
 const loadLogin = asyncHandler(async (req, res, next) => {
     if (req.session.admin) {
-        res.redirect('/api/v1/admin')
+        res.redirect('/admin')
     }
     if (req.query.LogoutMessage) {
         res
@@ -331,15 +331,15 @@ const checkAuthentic = asyncHandler(async (req, res, next) => {
 
         if (password == req.body.password) {
             req.session.admin = req.body;
-            res.redirect('/api/v1/admin')
+            res.redirect('/admin')
         } else {
             req.flash('passwordError', 'Invalid password!. try again.');
-            res.redirect('/api/v1/admin/login')
+            res.redirect('/admin/login')
         }
 
     } else {
         req.flash('emailError', 'Invalid email!. try again.');
-        res.redirect('/api/v1/admin/login');
+        res.redirect('/admin/login');
     }
 })
 
@@ -471,7 +471,7 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
             type: 'error',
             title: 'Oops! Order got Cancelled by the Admin',
             message: 'Dear user, Your order got cancelled by admin! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/notificationImages/8918481_4029028.jpg',
         })
         flag = false;
@@ -509,7 +509,7 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
             type: 'message',
             title: 'Order ' + status,
             message: 'Dear user, Your order is ' + status + '! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/notificationImages/' + image,
         })
     }
@@ -537,7 +537,7 @@ const createCoupon = asyncHandler(async (req, res, next) => {
         couponCode
 
     })
-    return res.redirect('/api/v1/admin/coupons')
+    return res.redirect('/admin/coupons')
     // return res.status(200)
     //     .json({
     //         success: true,
@@ -579,7 +579,7 @@ const editCoupon = asyncHandler(async (req, res, next) => {
             new: true
         }
     )
-    res.redirect('/api/v1/admin/coupons')
+    res.redirect('/admin/coupons')
 })
 
 const listAndUnlistCoupon = asyncHandler(async (req, res, next) => {
@@ -695,7 +695,7 @@ const editBanner = asyncHandler(async (req, res, next) => {
 
     }
     return res.status(200)
-        .redirect('/api/v1/admin/banners')
+        .redirect('/admin/banners')
 
 })
 
@@ -767,7 +767,7 @@ const createOffer = asyncHandler(async (req, res, next) => {
         })
     }
     res.status(201)
-        .redirect('/api/v1/admin/offers')
+        .redirect('/admin/offers')
 })
 
 const listAndUnlistOffer = asyncHandler(async (req, res, next) => {
@@ -826,7 +826,7 @@ const editOffer = asyncHandler(async (req, res, next) => {
             new: true
         }
     )
-    res.redirect('/api/v1/admin/offers')
+    res.redirect('/admin/offers')
 })
 
 
@@ -885,7 +885,7 @@ const returnChangeStatus = asyncHandler(async (req, res, next) => {
             type: 'success',
             title: 'Return request Accepted',
             message: 'Dear user, Your Return request has been accepted! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/Data/uploads/' + product.images[0],
         })
         flag = false;
@@ -897,7 +897,7 @@ const returnChangeStatus = asyncHandler(async (req, res, next) => {
             type: 'error',
             title: 'Return request got Rejected!',
             message: 'Dear user, Your Return request has been rejected by the admin! Check your order, Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/Data/uploads/' + product.images[0],
         })
     }

@@ -261,14 +261,14 @@ const loadShop = asyncHandler(async (req, res, next) => {
 const loadCheckout = asyncHandler(async (req, res, next) => {
     // if(! req.session.allowedToCheckout) {
     //     return res.status(401)
-    //     .redirect('/api/v1/')
+    //     .redirect('/')
     // }
     // const referrer = req.get('Referrer');
     // console.log(referrer)
     // if (!referrer || !referrer.includes('/cart')) {
     //     console.log('comes here');
     //     return res.status(401)
-    //     .redirect('/api/v1/')
+    //     .redirect('/')
     // }
     let user = req.session.user ? req.session.user : null;
     if (user) {
@@ -663,7 +663,7 @@ const loadAddAddress = asyncHandler(async (req, res, next) => {
 const loadUserNotifications = asyncHandler(async (req, res, next) => {
     let user = req.session.user;
     if (!user) {
-        return res.redirect('/api/v1')
+        return res.redirect('')
     }
     let notifications = await Notification.find({ recipient: user._id }).sort({ createdAt: -1 }).limit(12);
     res.render('user/notifications', { notifications, page: 0, total: 0 })
@@ -734,7 +734,7 @@ const addAddress = asyncHandler(async (req, res, next) => {
     // let { error, value } = userHelper.addressValidator.validate({ name, phone, alternatePhone, locality, district, pincode, street });
     // if (error) {
     //     req.flash('addressError', error.message)
-    //     return res.redirect('/api/v1/profile/add-address')
+    //     return res.redirect('/profile/add-address')
     // }
     let address = await Address.create(body);
     return res.status(201)

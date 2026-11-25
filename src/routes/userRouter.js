@@ -14,7 +14,7 @@ const upload = require('../helpers/multer.js');
 // Load the Home Page
 /**
  * @swagger
- * /api/v1:
+ * :
  *   get:
  *     summary: loading page
  *     description: returns landing page html.

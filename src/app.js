@@ -42,8 +42,8 @@ app.use(passport.session());
 
 
 
-app.use('/api/v1/admin', adminRouter);
-app.use('/api/v1', usersRouter);
+app.use('/', usersRouter);
+app.use('/admin', adminRouter);
 app.use('/google', googleRouter);
 
 

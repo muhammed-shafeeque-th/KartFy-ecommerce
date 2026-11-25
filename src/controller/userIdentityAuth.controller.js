@@ -16,12 +16,12 @@ const { otpTemplate, passwordUpdated } = require('../utilities/emailTemplates');
 
 
 const loadRegister = asyncHandler(async (req, res, next) => {
-    if (req.session.user) return res.redirect('/api/v1/')
+    if (req.session.user) return res.redirect('/')
     res.render('user/userRegister');
 })
 
 const loadLogin = asyncHandler(async (req, res, next) => {
-    if (req.session.user) return res.redirect('/api/v1/')
+    if (req.session.user) return res.redirect('/')
 
     res.render('user/userLogin');
 })
@@ -112,7 +112,7 @@ const varifyOtp = asyncHandler(async (req, res, next) => {
         type: 'message',
         title: 'Welcome to CartFy',
         message: `Hello member, Welcome to the world of Fashion, where  Fashion meats the customers's expectations `,
-        url: '/api/v1/profile',
+        url: '/profile',
         image: '/notificationImages/5538691_2887096.jpg'
 
     })
@@ -150,11 +150,11 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
       
         sendMail(email, 'Reset Account Password', passwordUpdated(token, user.name));
         req.flash('sentEmail', `Please check your Email ${req.body.email}`);
-        return res.redirect('/api/v1/forgot-password?checkEmail=' + encodeURIComponent('Please check your email'));
+        return res.redirect('/forgot-password?checkEmail=' + encodeURIComponent('Please check your email'));
     }
     req.flash('forgotError', 'Email does not exist!.')
     res.status(303)
-        .redirect('/api/v1/forgot-password');
+        .redirect('/forgot-password');
 })
 
 const resetPassword = asyncHandler(async (req, res, next) => {
@@ -162,7 +162,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     if (!userTocken) {
         req.flash('resetError', 'Something went wrong')
         return res.status(302)
-            .redirect('/api/v1/reset-password')
+            .redirect('/reset-password')
     }
     let { password, confirmPassword } = req.body;
     console.log(password, confirmPassword)
@@ -172,14 +172,14 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     if (error) {
         req.flash('resetError', error.message)
         return res.status(302)
-            .redirect('/api/v1/reset-password')
+            .redirect('/reset-password')
     }
     password = await bcrypt.hash(password, 10); // Hashing new password
     let tokens = await OTP.findOne({ token: userTocken });
     if(!tokens) {
         req.flash('resetError', 'Token got expired Try again!.')
         return res.status(302)
-            .redirect('/api/v1/reset-password')
+            .redirect('/reset-password')
     }
     let user = await User.findOneAndUpdate({ email: tokens.email },
         {
@@ -189,7 +189,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
         });
         req.session.user = user;
     req.flash('passwordSuccess', 'Password updated successfully.');
-    res.status(302).redirect('/api/v1/')
+    res.status(302).redirect('/')
 
 })
 

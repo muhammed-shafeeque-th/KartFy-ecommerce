@@ -317,7 +317,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
             type: 'info',
             title: 'Order placed successfully',
             message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
         })
         return res.status(201)
@@ -368,7 +368,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
                 type: 'info',
                 title: 'Order placed successfully',
                 message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-                url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+                url: '/my-orders/single-orderDetails?id=' + order._id,
                 image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
             })
 
@@ -410,7 +410,7 @@ const orderConfirm = asyncHandler(async (req, res, next) => {
 
 const orderCancel = asyncHandler(async (req, res, next) => {
     let user = req.session.user;
-    if (!user) return res.redirect('/api/v1/')
+    if (!user) return res.redirect('/')
     console.log(req.body)
     let { reason, comments, id } = req.body;
     let cancelDetails = { reason, comment: comments }
@@ -462,7 +462,7 @@ const orderCancel = asyncHandler(async (req, res, next) => {
         recipient: user._id,
         title: 'Oops..! Order got Cancelled',
         message: 'Dear user, Your order got Cancelled! Check your order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/8918481_4029028.jpg',
     })
     return res.json({
@@ -477,7 +477,7 @@ const orderCancel = asyncHandler(async (req, res, next) => {
 
 const orderProductReview = asyncHandler(async (req, res, next) => {
     let user = req.session.user
-    if (!user) return res.redirect('/api/v1')
+    if (!user) return res.redirect('/')
     let { rating, comment, review, orderId, productId, orderedItemId, size } = req.body;
     let updatedReviewOrder = await Order.findOneAndUpdate({
         _id: orderId,
@@ -552,7 +552,7 @@ const orderReturn = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Product Return requested send successfully!',
         message: 'Dear user, Your product return request has send successfully! Get more details about the return.. !',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/Data/uploads/' + product.images[0],
     });
 
@@ -653,7 +653,7 @@ const razorpaySuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
     })
     return res.status(200)
@@ -686,7 +686,7 @@ const razorpayFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
     })
 
@@ -724,10 +724,10 @@ const paypalSuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
     })
-    return res.redirect('/api/v1/order-success?orderId=' + orderId)
+    return res.redirect('/order-success?orderId=' + orderId)
     // return res.status(200)
     //     .json({
     //         success: true,
@@ -759,11 +759,11 @@ const paypalFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
     })
 
-    return res.redirect(`api/v1/admin//my-orders/single-orderDetails?id=${orderId}`)
+    return res.redirect(`/admin//my-orders/single-orderDetails?id=${orderId}`)
     // return res.status(400)
     //     .json({
 
@@ -802,7 +802,7 @@ const retryPaymentSuccess = asyncHandler(async (req, res, next) => {
         type: 'info',
         title: 'Order placed successfully',
         message: 'Dear user, Your order has successfully placed! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/12083598_Wavy_Bus-26_Single-03.jpg',
     })
     return res.status(200)
@@ -836,7 +836,7 @@ const retryPaymentFailure = asyncHandler(async (req, res, next) => {
         type: 'error',
         title: 'Oops! Payment Failure',
         message: 'Dear user, Your order request has been failed due to payment failure! Get more details about the order Check here',
-        url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+        url: '/my-orders/single-orderDetails?id=' + order._id,
         image: '/notificationImages/10783810_19197383.jpg',
     })
 
