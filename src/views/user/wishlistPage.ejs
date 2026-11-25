@@ -39,8 +39,8 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/api/v1">Home</a></li>
-                        <li class="breadcrumb-item"><a href="/api/v1/shop">Shop</a></li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
                     </ol>
                 </div><!-- End .container -->
@@ -70,13 +70,13 @@
 								<td class="product-col">
 									<div class="product">
 										<figure class="product-media">
-											<a href="/api/v1/product-detail?id=<%=wishlist.product._id%>">
+											<a href="/product-detail?id=<%=wishlist.product._id%>">
 												<img src="/Data/uploads/<%=wishlist?.product?.images[0]%>" alt="Product image">
 											</a>
 										</figure>
 
 										<h3 class="product-title">
-											<a href="/api/v1/product-detail?id=<%=wishlist.product._id%>"><%=wishlist?.product?.title%></a>
+											<a href="/product-detail?id=<%=wishlist.product._id%>"><%=wishlist?.product?.title%></a>
 										</h3><!-- End .product-title -->
 									</div><!-- End .product -->
 								</td>
@@ -122,15 +122,15 @@
 			function removeFromWishlist (id) {
 				try {
 					$.ajax({
-					url: '/api/v1/remove-wishlist',
+					url: '/remove-wishlist',
 					type: 'DELETE',
 					contentType: 'application/json',
 					data: JSON.stringify({id:id}),
 					success: (response) => {
                        if (response.success === true) {
-						$('#header-right').load('/api/v1/wishlist #header-right');
+						$('#header-right').load('/wishlist #header-right');
 						
-                           $('#Reload').load('/api/v1/wishlist #Reload' ,'/wishlist #header-right',()=> {
+                           $('#Reload').load('/wishlist #Reload' ,'/wishlist #header-right',()=> {
 							Swal.fire({
                                    titleText: 'Removed form wishlist',
                                    width:'300px',

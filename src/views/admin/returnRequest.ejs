@@ -57,7 +57,7 @@
               <td class=" justify-content-center col-3" >
               
                 <div style="float:left; flex-wrap: wrap;" class="m-2">
-                  <a href="/api/v1/admin/products/product-detail?id=<%=order.productId?._id%>">
+                  <a href="/admin/products/product-detail?id=<%=order.productId?._id%>">
                 <img
                 src="/Data/uploads/<%=order.productId?.images[0]%>"
                 alt=""
@@ -246,7 +246,7 @@
 
         function updateStatus(returnId, status) {
           console.log(returnId, status)
-          fetch('/api/v1/admin/returns/change-status',{
+          fetch('/admin/returns/change-status',{
             method: 'PATCH',
             body: JSON.stringify({returnId, status}),
             headers: {

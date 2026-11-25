@@ -23,7 +23,7 @@ const googleLogin = asyncHandler(async (req, res, next) => {
 
                 req.flash('blockedError', 'User is blocked by Admin')
                 res.status(304)
-                .redirect('/api/v1/signin');
+                .redirect('/signin');
 
             } else {
                 let user = await User.aggregate([
@@ -48,7 +48,7 @@ const googleLogin = asyncHandler(async (req, res, next) => {
 
                 req.session.user = user[0];
                 res
-                .redirect('/api/v1?message=' + encodeURIComponent('User already existed...'));
+                .redirect('/?message=' + encodeURIComponent('User already existed...'));
 
             }
 
@@ -68,14 +68,14 @@ const googleLogin = asyncHandler(async (req, res, next) => {
                 type: 'message',
                 title: 'Welcome to CartFy',
                 message: `Hello member, Welcome to the world of Fashion, where  Fashion meats the customers's expectations `,
-                url: '/api/v1/profile',
+                url: '/profile',
                 image: '/notificationImages/5538691_2887096.jpg'
         
             })
 
                console.log('google customer is saved to db');
                 req.session.user = user;
-                res.redirect('/api/v1?message=' + encodeURIComponent('User saved to db..'));
+                res.redirect('/?message=' + encodeURIComponent('User saved to db..'));
          
 
         }

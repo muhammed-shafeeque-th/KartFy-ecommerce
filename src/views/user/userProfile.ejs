@@ -8,8 +8,8 @@
 		<nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
 			<div class="container">
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="/api/v1/">Home</a></li>
-					<li class="breadcrumb-item"><a href="/api/v1/shop">Shop</a></li>
+					<li class="breadcrumb-item"><a href="/">Home</a></li>
+					<li class="breadcrumb-item"><a href="/shop">Shop</a></li>
 					<li class="breadcrumb-item active" aria-current="page">My Account</li>
 				</ol>
 			</div><!-- End .container -->
@@ -27,7 +27,7 @@
 										aria-selected="true">Dashboard</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" id="tab-wallet-link" href="/api/v1/my-orders"
+									<a class="nav-link" id="tab-wallet-link" href="/my-orders"
 										aria-selected="false">My Orders</a>
 								</li>
 								<li class="nav-item">
@@ -35,11 +35,11 @@
 										role="tab" aria-controls="tab-wallet" aria-selected="false">My Wallet</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" id="tab-downloads-link" href="/api/v1/wishlist"
+									<a class="nav-link" id="tab-downloads-link" href="/wishlist"
 										aria-selected="false">My Wishlist</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" id="tab-account-link" href="/api/v1/cart"
+									<a class="nav-link" id="tab-account-link" href="/cart"
 										aria-selected="false">My
 										Cart</a>
 								</li>
@@ -106,8 +106,8 @@
 														
 
 
-														<!-- <a class="mx-3" href=""> </a>
-															<a class="mx-3"  href=""> </a></p> -->
+														<!-- <a class="mx-3" href="/"> </a>
+															<a class="mx-3"  href="/"> </a></p> -->
 
 														<div class="accordion " id="accordionExample">
 															<div class="accordion-item m-5">
@@ -338,7 +338,7 @@
 									<div class="d-flex my-4" style="justify-content: space-between;">
 										<p>The following addresses will be used on the checkout page by default.</p>
 
-										<a href="/api/v1/profile/add-address" class="btn btn-primary text-end"><span>Add
+										<a href="/profile/add-address" class="btn btn-primary text-end"><span>Add
 												New
 												Address</span></a>
 
@@ -363,7 +363,7 @@
 																					<div class="row align-items-center"
 																						style="justify-content: space-evenly;">
 																						<a class="btn btn-primary"
-																							href="/api/v1/profile/edit-address?id=<%=addresses?._id%>">Edit
+																							href="/profile/edit-address?id=<%=addresses?._id%>">Edit
 																							<i
 																								class="icon-edit"></i></a>
 																						<button style="all: unset;"

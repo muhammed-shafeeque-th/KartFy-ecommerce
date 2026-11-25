@@ -48,7 +48,7 @@
                 </thead>
                 <tbody>
                   <%if(order) {%> <%order.forEach((item, i) => {%>
-                  <a href="/api/v1/admin/single-orderDetails?orderId=<%= item._id%>">
+                  <a href="/admin/single-orderDetails?orderId=<%= item._id%>">
                   <tr>
                    
                     <td><%=  item.orderId%></td>
@@ -67,7 +67,7 @@
                     <td><%= formattedDate%></td>
                     <td class="">
                       <a
-                        href="/api/v1/admin/orders/single-order-details?id=<%= item._id%>"
+                        href="/admin/orders/single-order-details?id=<%= item._id%>"
                         >More details</a
                       >
                       <!-- dropdown //end -->

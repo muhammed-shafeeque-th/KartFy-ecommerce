@@ -7,7 +7,8 @@ const User = require('../models/user.model');
 const Address = require('../models/address.model');
 const Category = require('../models/category.model');
 const { Product, Inventory } = require('../models/product.models');
-const { Cart, Wishlist } = require('../models/wishlist.model');
+const { Cart } = require('../models/cart.model');
+const {  Wishlist } = require('../models/wishlist.model');
 const Wallet = require('../models/wallet.model');
 const Banner = require('../models/banner.model');
 const Referrel = require('../models/referrel.model');
@@ -28,20 +29,20 @@ const loadShop = asyncHandler(async (req, res, next) => {
     let size = req.query.size || [];
     let gender = (Array.isArray(req.query.Gender) ? req.query.Gender : req.query.Gender?.split(' '));
     let brand = (Array.isArray(req.query.Brands) ? req.query.Brands : req.query.Brands?.split(' '));
-    let categor = [];
-    if (gender) categor.push({ 'products.category.Gender': { $in: gender } });
-    if (category) categor.push({ 'products.category.Category': { $in: category } })
-    if (brand) categor.push({ 'products.category.Brands': { $in: brand } })
+    let stageCategory = [];
+    if (gender) stageCategory.push({ 'products.category.Gender': { $in: gender } });
+    if (category) stageCategory.push({ 'products.category.Category': { $in: category } })
+    if (brand) stageCategory.push({ 'products.category.Brands': { $in: brand } })
 
     
     // use query params to filter out the required products
     let matchValue = {};
     let sort = req.query.sort?.trim() || ''
     let search = req.query.search ? String(req.query.search).trim() : ''
-    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '') // sanitize special characters from search input 
+    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '') // sanitize search query params (specifically checking special regex ) 
     if (gender || category || brand) {
         matchValue = {
-            $or: categor
+            $or: stageCategory
         }
     }
     if (sort == 'high to Low') {
@@ -260,14 +261,14 @@ const loadShop = asyncHandler(async (req, res, next) => {
 const loadCheckout = asyncHandler(async (req, res, next) => {
     // if(! req.session.allowedToCheckout) {
     //     return res.status(401)
-    //     .redirect('/api/v1/')
+    //     .redirect('/')
     // }
     // const referrer = req.get('Referrer');
     // console.log(referrer)
     // if (!referrer || !referrer.includes('/cart')) {
     //     console.log('comes here');
     //     return res.status(401)
-    //     .redirect('/api/v1/')
+    //     .redirect('/')
     // }
     let user = req.session.user ? req.session.user : null;
     if (user) {
@@ -662,7 +663,7 @@ const loadAddAddress = asyncHandler(async (req, res, next) => {
 const loadUserNotifications = asyncHandler(async (req, res, next) => {
     let user = req.session.user;
     if (!user) {
-        return res.redirect('/api/v1')
+        return res.redirect('')
     }
     let notifications = await Notification.find({ recipient: user._id }).sort({ createdAt: -1 }).limit(12);
     res.render('user/notifications', { notifications, page: 0, total: 0 })
@@ -733,7 +734,7 @@ const addAddress = asyncHandler(async (req, res, next) => {
     // let { error, value } = userHelper.addressValidator.validate({ name, phone, alternatePhone, locality, district, pincode, street });
     // if (error) {
     //     req.flash('addressError', error.message)
-    //     return res.redirect('/api/v1/profile/add-address')
+    //     return res.redirect('/profile/add-address')
     // }
     let address = await Address.create(body);
     return res.status(201)

@@ -12,7 +12,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3000/api/v1', // Base URL of your API
+                url: 'http://localhost:3000', // Base URL of your API
             },
         ],
     },
@@ -24,9 +24,9 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 exports.swaggerSetup = (app) => {
     // Swagger Page
-    app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
     // Documentation in JSON format
-    app.get('/api/v1/docs.json', (req, res) => {
+    app.get('/docs.json', (req, res) => {
         res.setHeader('Content-Type', 'application/json')
         res.send(swaggerDocs)
     })

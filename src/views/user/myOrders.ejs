@@ -64,8 +64,8 @@
 			<nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
 				<div class="container">
 					<ol class="breadcrumb">
-						<li class="breadcrumb-item"><a href="/api/v1/">Home</a></li>
-						<li class="breadcrumb-item"><a href="/api/v1/Profile">My Account</a></li>
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item"><a href="/Profile">My Account</a></li>
 						<li class="breadcrumb-item active" aria-current="page">My Orders</li>
 					</ol>
 				</div><!-- End .container -->
@@ -112,7 +112,7 @@
 														<% order.orderedItems.forEach((item, i)=> {%>
 															<div style="float:left; flex-wrap: wrap;" class="m-2">
 																<a
-																	href="api/v1/product-detail?id=<%=item.product._id%>">
+																	href="/product-detail?id=<%=item.product._id%>">
 																	<img src="/Data/uploads/<%=item.product.images[0]%>"
 																		alt="" class="img-md rounded mx-2 shadow" />
 																	<p class="text-start text-dark"
@@ -201,7 +201,7 @@
 																		<button disabled
 																			class="btn btn-danger rounded">Order
 																			Cancelled</button>
-																		<!-- <a href="/api/v1/shop">Continue shopping</a> -->
+																		<!-- <a href="/shop">Continue shopping</a> -->
 
 																		<%}else{%>
 																			<button data-orderId="<%= order._id%>" id=""

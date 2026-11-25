@@ -166,7 +166,7 @@ const addProduct = asyncHandler(async (req, res, next) => {
     await Inventory.create({
         product: product._id
     })
-    res.redirect('/api/v1/admin/products');
+    res.redirect('/admin/products');
 
 })
 

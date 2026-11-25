@@ -9,16 +9,20 @@ const loadCategories = asyncHandler(async (req, res, next) => {
     let page = parseInt(req.query.page) - 1 || 0;
     let limit = parseInt(req.query.limit) || 7;
     page < 0 ? (page = 0) : page = page
+
+
     let total = await Category.countDocuments({});
     const categories = await Category.find({})
         .sort({ createdAt: -1 })
         .skip(page * limit)
         .limit(limit);
+
+
     res.render('admin/Catagery', {
-            categories,
-            page,
-            total
-        });
+        categories,
+        page,
+        total
+    });
 })
 
 const loadAddCategory = asyncHandler(async (req, res, next) => {
@@ -54,7 +58,7 @@ const loadSubCategories = asyncHandler(async (req, res, next) => {
     let id = req.query.id;
     req.session.categoryId = id;
     let category = await Category.findOne({ _id: id });
-    res.render('admin/subCategories', { category, title: 'Sub Cateries', })
+    res.render('admin/subCategories', { category, title: 'Sub Categories', })
 
 })
 
@@ -82,17 +86,17 @@ const addCategory = asyncHandler(async (req, res, next) => {
             .then((saved) => {
                 if (saved) {
                     res.json({
-                            success: true,
-                            error: false,
-                            message: 'Category added successfully'
-                        });
+                        success: true,
+                        error: false,
+                        message: 'Category added successfully'
+                    });
                 }
             })
             .catch((error) => {
                 console.log(error)
             })
     } else {
-        console.log('data not recieved');
+        console.log('data not received');
     }
 })
 
@@ -200,7 +204,7 @@ const editSubCategory = asyncHandler(async (req, res, next) => {
             success: true,
             error: null,
             data: result,
-            message: 'SubCategory edited Succesfulyy'
+            message: 'SubCategory edited Successfully'
         })
 })
 
@@ -240,7 +244,7 @@ const addSubCategory = asyncHandler(async (req, res, next) => {
     return res.json({
         success: true,
         error: false,
-        message: 'Sub category added Successfull'
+        message: 'Sub category added Successfully'
     })
 })
 

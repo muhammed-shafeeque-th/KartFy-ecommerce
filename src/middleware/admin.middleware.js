@@ -7,14 +7,14 @@ const isLoged = asyncHandler(async (req, res, next) => {
     if (!req.session.admin) {
 
         return res.status(401)
-            .redirect('/api/v1/admin/login')
+            .redirect('/admin/login')
     }
     next();
 })
 
 const adminLogout = asyncHandler(async (req, res, next) => {
     req.session.admin = null;
-    return res.redirect('/api/v1/admin/login?LogoutMessage=' + encodeURIComponent('Admin Logged out successfully'));
+    return res.redirect('/admin/login?LogoutMessage=' + encodeURIComponent('Admin Logged out successfully'));
 })
 
 

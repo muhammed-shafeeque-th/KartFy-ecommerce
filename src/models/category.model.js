@@ -17,13 +17,13 @@ const categorySchema = mongoose.Schema({
         ref: 'Offer',
 
     },
-    subCategories:[{
-        title:{
+    subCategories: [{
+        title: {
             type: String,
             required: true,
             unique: true
         },
-        description:{
+        description: {
             type: String,
             required: true,
 

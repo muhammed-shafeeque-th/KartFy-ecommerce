@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const { Product, Inventory } = require('../models/product.models');
-const { Cart, Wishlist } = require('../models/wishlist.model');
+const { Cart } = require('../models/cart.model');
+const {  Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
 const { calculateDeliveryCharge, getCordinates, getDistance } = require('../helpers/calculateDeliveryCharge');
+const ApiError = require('../utilities/apiError');
 
 const loadCart = asyncHandler(async (req, res, next) => {
 
@@ -169,22 +171,15 @@ const addToCart = asyncHandler(async (req, res, next) => {
     let inventory = await Inventory.findOne({ product: id }).populate('product')
     let product = inventory.sizeVariant.find(item => item.size == size);
     if (!product) {
-        return res.json({
-            success: false,
-            error: true,
-            message: 'Product Out of Stock'
-        })
+        throw new ApiError(404, 'Product Out of Stock' );
     }
     let userCart = await Cart.findOne({ user });
     if (userCart && userCart.isCouponApplied) {
         await userCart.removeCouponIfApplied();
     }
     if (!product.stock > 0) {
-        return res.json({
-            success: false,
-            error: true,
-            message: 'Product Size Out of Stock'
-        })
+        throw new ApiError(404, 'Product Size Out of Stock' );
+       
     }
     if (addToCartFromWishlist === true) {
      

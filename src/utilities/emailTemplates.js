@@ -1,3 +1,4 @@
+const { config } = require("../config/app.config");
 
 
 const otpTemplate = (otp, name) => {
@@ -68,7 +69,7 @@ const otpTemplate = (otp, name) => {
 	
 	<body>
 		<div class="container">
-			<a href="http://${process.env.ORIGIN_URL}/api/v1"><img class="logo"
+			<a href="${config.siteUrl}"><img class="logo"
 					src="https://img.atom.com/story_images/visual_images/1612609471-kafty.png?class=show" alt="KartFy Logo"></a>
 			<div class="message">OTP Verification Email</div>
 			<div class="body">
@@ -144,14 +145,14 @@ const passwordUpdated = (Token, name) => {
     
     <body>
         <div class="container">
-            <a href="http://${process.env.ORIGIN_URL}/api/v1"><img class="logo"
+            <a href="${config.siteUrl}"><img class="logo"
 			src="https://img.atom.com/story_images/visual_images/1612609471-kafty.png?class=show" alt="KartFy Logo"></a>
             <div class="message">Reset Password Confirmation</div>
             <div class="body">
 			<p>Dear ${name}</p>
 			<p>Thank you for working with KartFy. To complete your transacton, please use the following link
 				 to change  your account password:</p>
-			<h2 class="highlight"> Press <a href=http://${process.env.ORIGIN_URL}/api/v1/reset-password?token=${Token}> here </a> to Reset your password</h2>
+			<h2 class="highlight"> Press <a href=${config.siteUrl}/reset-password?token=${Token}> here </a> to Reset your password</h2>
 			<p>This link is valid only for 3 minutes. If you did not request this verification, please disregard this email.
 			If the link got expired please try the process you have done. Thank you </p>
             </div>

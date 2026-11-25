@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user.model');
-const { Cart, Wishlist } = require('../models/wishlist.model');
+const { Cart } = require('../models/cart.model');
+const {  Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
 const { calculateDeliveryCharge, getCordinates, getDistance } = require('../helpers/calculateDeliveryCharge');
 
@@ -11,7 +12,7 @@ const isUserAutharized = asyncHandler(async (req, res, next) => {
 
     if (!req.session.user) {
 
-        return res.redirect('/api/v1/')
+        return res.redirect('/')
 
 
     }
@@ -19,7 +20,7 @@ const isUserAutharized = asyncHandler(async (req, res, next) => {
     let user = await User.findById(id);
     if (user.isBlocked == true) {
         req.session.user = null
-        res.redirect('/api/v1/')
+        res.redirect('/')
     }
     next()
 
@@ -131,7 +132,7 @@ const userHeaderPopulator = asyncHandler(async (req, res, next) => {
 
 const checkoutValidator = asyncHandler(async (req, res, next) => {
     req.session.allowCheckout = true,
-     res.redirect('/api/v1/checkout')
+     res.redirect('/checkout')
 })
 
 

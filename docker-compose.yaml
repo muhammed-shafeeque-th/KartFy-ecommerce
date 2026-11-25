@@ -1,0 +1,6 @@
+services:
+  api:
+    image: muhammedshafeequeth/kartfy:v1.0.4
+    restart: unless-stopped
+    ports: ["3000:3000"]
+    env_file: .env

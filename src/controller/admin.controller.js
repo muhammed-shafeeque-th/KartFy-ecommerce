@@ -15,6 +15,7 @@ const { Product, Inventory } = require('../models/product.models')
 const Wallet = require('../models/wallet.model');
 const excelJs = require('exceljs');
 const Notification = require('../models/notification.model');
+const { config } = require('../config/app.config');
 
 const loadDashboard = asyncHandler(async (req, res, next) => {
     let now = new Date();
@@ -170,7 +171,7 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
     monthlyRevenue = monthlyDeliveredOrders.find(item => item._id == now.getMonth() + 1)?.totalAmount // retrieve the current monthly revenue
 
     res.status(200)
-        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingTenProducts, brand: topTenBrand, topTenCetagory: topTenCatagory });
+        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingTenProducts, brand: topTenBrand, topTenCetagory: topTenCategory });
 })
 
 const getFilterData = asyncHandler(async (req, res, next) => {
@@ -289,7 +290,7 @@ const salesReportDownLoadExcel = asyncHandler(async (req, res, next) => {
         //     }
         // }
     ])
-  
+
     const workBook = new excelJs.Workbook();
     const workSheet = workBook.addWorksheet('Report');
     const destinationPath = path.join(__dirname, '../../public/excelSheets');
@@ -310,7 +311,7 @@ const salesReportDownLoadExcel = asyncHandler(async (req, res, next) => {
 
 const loadLogin = asyncHandler(async (req, res, next) => {
     if (req.session.admin) {
-        res.redirect('/api/v1/admin')
+        res.redirect('/admin')
     }
     if (req.query.LogoutMessage) {
         res
@@ -324,21 +325,21 @@ const loadLogin = asyncHandler(async (req, res, next) => {
 })
 
 const checkAuthentic = asyncHandler(async (req, res, next) => {
-    email = process.env.ADMIN_EMAIL;
-    password = process.env.ADMIN_PASSWORD;
+    const email = config.admin.email;
+    const password = config.admin.password;
     if (email == req.body.email) {
 
         if (password == req.body.password) {
             req.session.admin = req.body;
-            res.redirect('/api/v1/admin')
+            res.redirect('/admin')
         } else {
             req.flash('passwordError', 'Invalid password!. try again.');
-            res.redirect('/api/v1/admin/login')
+            res.redirect('/admin/login')
         }
 
     } else {
         req.flash('emailError', 'Invalid email!. try again.');
-        res.redirect('/api/v1/admin/login');
+        res.redirect('/admin/login');
     }
 })
 
@@ -365,10 +366,10 @@ const loadOrders = asyncHandler(async (req, res, next) => {
         .skip(page * limit)
         .limit(limit)
     res.render('admin/order-details', {
-            order,
-            page,
-            total
-        });
+        order,
+        page,
+        total
+    });
 })
 
 const loadSingleOrderDetails = asyncHandler(async (req, res, next) => {
@@ -470,7 +471,7 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
             type: 'error',
             title: 'Oops! Order got Cancelled by the Admin',
             message: 'Dear user, Your order got cancelled by admin! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/notificationImages/8918481_4029028.jpg',
         })
         flag = false;
@@ -490,14 +491,14 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
     })
     await order.save();
     let image;
-    if(status == 'Shipped'){
+    if (status == 'Shipped') {
         image = '1287161_164732-OVURV2-709.jpg';
 
 
-    }else if(status == 'Delivered') {
+    } else if (status == 'Delivered') {
         image = '7967777_3802305.jpg'
 
-    }else if(status == 'Out For Delivery') {
+    } else if (status == 'Out For Delivery') {
         image = '29765706_7591470.jpg'
 
     }
@@ -508,8 +509,8 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
             type: 'message',
             title: 'Order ' + status,
             message: 'Dear user, Your order is ' + status + '! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
-            image: '/notificationImages/'+image,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
+            image: '/notificationImages/' + image,
         })
     }
     return res.json({
@@ -536,7 +537,7 @@ const createCoupon = asyncHandler(async (req, res, next) => {
         couponCode
 
     })
-    return res.redirect('/api/v1/admin/coupons')
+    return res.redirect('/admin/coupons')
     // return res.status(200)
     //     .json({
     //         success: true,
@@ -578,7 +579,7 @@ const editCoupon = asyncHandler(async (req, res, next) => {
             new: true
         }
     )
-    res.redirect('/api/v1/admin/coupons')
+    res.redirect('/admin/coupons')
 })
 
 const listAndUnlistCoupon = asyncHandler(async (req, res, next) => {
@@ -694,7 +695,7 @@ const editBanner = asyncHandler(async (req, res, next) => {
 
     }
     return res.status(200)
-        .redirect('/api/v1/admin/banners')
+        .redirect('/admin/banners')
 
 })
 
@@ -741,7 +742,7 @@ const getOfferData = asyncHandler(async (req, res, next) => {
                     error: false,
                     categoryData,
                     message: 'Products fetched successfully'
-            })
+                })
         }
     }
 })
@@ -766,7 +767,7 @@ const createOffer = asyncHandler(async (req, res, next) => {
         })
     }
     res.status(201)
-        .redirect('/api/v1/admin/offers')
+        .redirect('/admin/offers')
 })
 
 const listAndUnlistOffer = asyncHandler(async (req, res, next) => {
@@ -825,7 +826,7 @@ const editOffer = asyncHandler(async (req, res, next) => {
             new: true
         }
     )
-    res.redirect('/api/v1/admin/offers')
+    res.redirect('/admin/offers')
 })
 
 
@@ -878,25 +879,25 @@ const returnChangeStatus = asyncHandler(async (req, res, next) => {
                     'sizeVariant.$.stock': returns.quantity,
                 }
             });
-          
+
         const notification = await Notification.create({
             recipient: returns.user,
             type: 'success',
             title: 'Return request Accepted',
             message: 'Dear user, Your Return request has been accepted! Check your order Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/Data/uploads/' + product.images[0],
         })
         flag = false;
     }
- 
+
     if (flag) {
         const notification = await Notification.create({
-            recipient:  returns.user,
+            recipient: returns.user,
             type: 'error',
             title: 'Return request got Rejected!',
             message: 'Dear user, Your Return request has been rejected by the admin! Check your order, Check here',
-            url: '/api/v1/my-orders/single-orderDetails?id=' + order._id,
+            url: '/my-orders/single-orderDetails?id=' + order._id,
             image: '/Data/uploads/' + product.images[0],
         })
     }
